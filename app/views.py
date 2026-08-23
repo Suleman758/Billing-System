@@ -1,12 +1,22 @@
 from django import http
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 # Create your views here.
 
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm
 
+
+@login_required
+def home(request):
+    return render(request, "home.html",{'user' : request.user})
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 
 def signup(request):
     if request.method == "POST":
@@ -48,7 +58,7 @@ def login_view(request):
 
         return render(
             request,
-            "Billing/login.html",
+            "login.html",
             {"error": "Invalid email or password"},
         )
 

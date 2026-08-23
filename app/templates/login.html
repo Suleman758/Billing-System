@@ -1,32 +1,232 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --error: #b8624c;
+    --error-bg: rgba(184,98,76,0.1);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(200,164,91,0.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 48px 20px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 440px;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-bottom: 28px;
+    opacity:0;
+    animation: fadeIn 0.7s ease forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, transparent, var(--border) 40%, var(--border) 60%, transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.1rem;
+    line-height:1.15;
+    text-align:center;
+    margin: 0 0 32px;
+    letter-spacing: -0.01em;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .error-box{
+    background: var(--error-bg);
+    border: 1px solid var(--error);
+    color: var(--error);
+    font-size: 0.85rem;
+    padding: 12px 14px;
+    border-radius: 3px;
+    margin: 0 0 24px;
+  }
+  .error-box p{ margin:0; }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 40px 36px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.25s forwards;
+  }
+
+  form{
+    display:flex;
+    flex-direction:column;
+  }
+
+  form label{
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  form label:not(:first-child){
+    margin-top: 24px;
+  }
+
+  form input[type="email"],
+  form input[type="password"]{
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.98rem;
+    padding: 8px 2px 10px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    width: 100%;
+  }
+
+  form input[type="email"]:focus,
+  form input[type="password"]:focus{
+    border-bottom-color: var(--accent);
+  }
+
+  form input::placeholder{ color: #4a4438; }
+
+  button[type="submit"]{
+    width:100%;
+    background: var(--accent);
+    color: #17150f;
+    border: none;
+    padding: 14px 0;
+    font-family:'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 32px;
+    transition: background 0.25s ease, transform 0.15s ease;
+  }
+  button[type="submit"]:hover{ background: #d9b774; }
+  button[type="submit"]:active{ transform: scale(0.99); }
+  button[type="submit"]:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .foot{
+    text-align:center;
+    margin-top: 24px;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.35s forwards;
+  }
+  .foot a{
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+  .foot a:hover{ border-bottom-color: var(--accent); }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mark, h1, .card, .foot{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 32px 24px; }
+    h1{ font-size: 1.8rem; }
+  }
+</style>
 </head>
 <body>
+
+  <div class="panel">
+
+    <div class="mark">
+      <span class="line"></span>
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
 
     <h1>Login</h1>
 
     {% if error %}
-        <p>{{ error }}</p>
+        <div class="error-box">
+            <p>{{ error }}</p>
+        </div>
     {% endif %}
 
-    <form method="post">
+    <div class="card">
+      <form method="post">
         {% csrf_token %}
 
         <label>Email:</label>
-        <input type="email" name="email" required>
+        <input type="email" name="email" placeholder="you@example.com" required>
 
         <label>Password:</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" placeholder="••••••••" required>
 
         <button type="submit">Login</button>
-    </form>
+      </form>
+    </div>
 
-    <p>
-        Don't have an account?
-        <a href="{% url 'signup' %}">Signup</a>
+    <p class="foot">
+      Don't have an account? <a href="{% url 'signup' %}">Signup</a>
     </p>
+
+  </div>
 
 </body>
 </html>
