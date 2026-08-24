@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --accent-soft: rgba(200,164,91,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(200,164,91,0.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    padding: 56px 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .top-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.1rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .btn-create{
+    display:inline-block;
+    background: var(--accent);
+    color: #17150f;
+    text-decoration:none;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 2px;
+    transition: background 0.25s ease, transform 0.15s ease;
+  }
+  .btn-create:hover{ background: #d9b774; }
+  .btn-create:active{ transform: scale(0.98); }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin: 20px 0 36px;
+    opacity:0;
+    animation: fadeIn 0.7s ease 0.15s forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  .table-card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.25s forwards;
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  thead th{
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+    font-weight: 500;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th:last-child{ text-align: right; }
+
+  tbody td{
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text);
+  }
+
+  tbody tr:last-child td{ border-bottom: none; }
+
+  tbody tr{ transition: background 0.2s ease; }
+  tbody tr:hover{ background: var(--accent-soft); }
+
+  tbody td:nth-child(3),
+  tbody td:nth-child(4){
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+  }
+
+  td.actions{ text-align: right; }
+  td.actions a{
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+  td.actions a:hover{ border-bottom-color: var(--accent); }
+
+  .empty-state{
+    text-align:center;
+    padding: 64px 24px;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.25s forwards;
+  }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .top-row, .mark, .table-card, .empty-state{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 640px){
+    h1{ font-size: 1.7rem; }
+    thead{ display:none; }
+    table, tbody, tr, td{ display:block; width:100%; }
+    tbody tr{ border-bottom: 1px solid var(--border); padding: 14px 20px; }
+    tbody td{ border: none; padding: 4px 0; }
+    tbody td::before{
+      content: attr(data-label);
+      display:block;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+    td.actions{ text-align: left; margin-top: 6px; }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="panel">
+
+    <div class="top-row">
+      <h1>Features</h1>
+      <a class="btn-create" href="{% url 'create_feature' %}">Create Feature</a>
+    </div>
+
+    <div class="mark">
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
+
+    {% if features %}
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Unit Price</th>
+                        <th>Max Unit Limit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for feature in features %}
+                        <tr>
+                            <td data-label="Name">{{ feature.name }}</td>
+                            <td data-label="Code">{{ feature.code }}</td>
+                            <td data-label="Unit Price">{{ feature.unit_price }}</td>
+                            <td data-label="Max Unit Limit">{{ feature.max_unit_limit }}</td>
+                            <td class="actions" data-label="Actions">
+                                <br><a href="{% url 'edit_feature' feature.id %}">Edit</a></br>
+                                <a href="{% url 'delete_feature' feature.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <p>No features have been created yet.</p>
+        </div>
+
+    {% endif %}
+
+  </div>
+
+</body>
+</html>
