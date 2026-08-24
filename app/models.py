@@ -43,11 +43,17 @@ class Plan(models.Model):
     monthly_fee = models.DecimalField(max_digits=10, decimal_places=2)
     features = models.ManyToManyField('Feature')
 
+    def __str__(self):
+        return self.name
+
 class Feature(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=100,unique=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0)])
     max_unit_limit = models.IntegerField(null=True, blank=True,validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return self.name
 
 class Subscription(models.Model):
     Buyer = models.ForeignKey(User, on_delete=models.CASCADE,related_name='subscriptions', limit_choices_to={'type': 'user'})

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delete Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --accent-soft: rgba(200,164,91,0.14);
+    --danger: #b8624c;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(184,98,76,0.07), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 48px 20px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 440px;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-bottom: 28px;
+    opacity:0;
+    animation: fadeIn 0.7s ease forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, transparent, var(--border) 40%, var(--border) 60%, transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--danger);
+    flex-shrink:0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2rem;
+    line-height:1.15;
+    text-align:center;
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 36px 32px;
+    text-align: center;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .warning-text{
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin: 0 0 20px;
+  }
+  .warning-text strong{
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .details{
+    text-align: left;
+    background: var(--border-soft);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 18px;
+    margin: 0 0 28px;
+  }
+
+  .details-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .details-row + .details-row{
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .details-label{
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .details-value{
+    font-size: 0.9rem;
+    color: var(--text);
+    text-align: right;
+  }
+
+  .chip-row{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .chip{
+    display:inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.74rem;
+    padding: 3px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .no-features{
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  form{ margin: 0; }
+
+  button[type="submit"]{
+    width:100%;
+    background: var(--danger);
+    color: #1a1310;
+    border: none;
+    padding: 14px 0;
+    font-family:'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.15s ease;
+  }
+  button[type="submit"]:hover{ background: #cb7861; }
+  button[type="submit"]:active{ transform: scale(0.99); }
+  button[type="submit"]:focus-visible{
+    outline: 2px solid var(--danger);
+    outline-offset: 3px;
+  }
+
+  .foot{
+    text-align:center;
+    margin-top: 22px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+  .foot a{
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .foot a:hover{
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mark, h1, .card, .foot{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 480px){
+    .card{ padding: 28px 24px; }
+    h1{ font-size: 1.7rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="panel">
+
+    <div class="mark">
+      <span class="line"></span>
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
+
+    <h1>Delete Plan</h1>
+
+    <div class="card">
+      <p class="warning-text">
+        Are you sure you want to delete <strong>{{ plan.name }}</strong>?
+        This action cannot be undone.
+      </p>
+
+      <div class="details">
+        <div class="details-row">
+          <span class="details-label">Monthly Fee</span>
+          <span class="details-value">{{ plan.monthly_fee }}</span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Features</span>
+          <span class="details-value">
+            <div class="chip-row">
+              {% for feature in plan.features.all %}
+                <span class="chip">{{ feature.name }}</span>
+              {% empty %}
+                <span class="no-features">No features</span>
+              {% endfor %}
+            </div>
+          </span>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+      </form>
+    </div>
+
+    <p class="foot">
+      <a href="{% url 'plan_list' %}">Cancel</a>
+    </p>
+
+  </div>
+
+</body>
+</html>
