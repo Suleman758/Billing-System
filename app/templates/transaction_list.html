@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Subscriptions</title>
+<title>Transactions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -36,19 +36,8 @@
 
   .panel{
     width:100%;
-    max-width: 960px;
+    max-width: 940px;
     margin: 0 auto;
-  }
-
-  .top-row{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 8px;
-    opacity:0;
-    animation: fadeUp 0.7s ease 0.1s forwards;
   }
 
   h1{
@@ -58,23 +47,9 @@
     font-size: 2.1rem;
     margin: 0;
     letter-spacing: -0.01em;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
   }
-
-  .btn-create{
-    display:inline-block;
-    background: var(--accent);
-    color: #17150f;
-    text-decoration:none;
-    padding: 10px 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-radius: 2px;
-    transition: background 0.25s ease, transform 0.15s ease;
-  }
-  .btn-create:hover{ background: #d9b774; }
-  .btn-create:active{ transform: scale(0.98); }
 
   .mark{
     display:flex;
@@ -108,72 +83,74 @@
   table{
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
   }
 
   thead th{
     text-align: left;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.08em;
     color: var(--text-dim);
     font-weight: 500;
-    padding: 18px 24px 14px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid var(--border);
   }
-
-  thead th:last-child{ text-align: right; }
+  thead th:nth-child(3),
+  thead th:nth-child(6){ text-align: right; }
 
   tbody td{
-    padding: 16px 24px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border-soft);
-    color: var(--text);
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
   }
-
   tbody tr:last-child td{ border-bottom: none; }
-
   tbody tr{ transition: background 0.2s ease; }
   tbody tr:hover{ background: var(--accent-soft); }
 
-  tbody td:nth-child(2),
-  tbody td:nth-child(3){
-    font-variant-numeric: tabular-nums;
+  tbody td:first-child{
     color: var(--text-dim);
+    font-size: 0.82rem;
   }
 
-  .status{
+  tbody td:nth-child(3){
+    text-align: right;
+    color: var(--accent);
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+  }
+
+  tbody td:nth-child(6){
+    text-align: right;
+  }
+
+  .type-pill{
     display:inline-block;
     font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     font-weight: 600;
-    padding: 4px 10px;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .type-pill[data-type="debit"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
+  .type-pill[data-type="credit"]{ background: rgba(122,168,116,0.14); color: #7aa874; }
+
+  .status-pill{
+    display:inline-block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    padding: 3px 10px;
     border-radius: 12px;
     background: var(--accent-soft);
     color: var(--accent);
   }
-  .status[data-status="active"]{ background: rgba(122,168,116,0.14); color: #7aa874; }
-  .status[data-status="cancelled"],
-  .status[data-status="canceled"],
-  .status[data-status="expired"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
-  .status[data-status="pending"]{ background: var(--accent-soft); color: var(--accent); }
-
-  td.actions{ text-align: right; }
-  td.actions a{
-    color: var(--danger);
-    text-decoration: none;
-    font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.25s ease;
-  }
-  td.actions a:hover{ border-bottom-color: var(--danger); }
-  td.actions .inactive-label{
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    font-style: italic;
-  }
+  .status-pill[data-status="success"]{ background: rgba(122,168,116,0.14); color: #7aa874; }
+  .status-pill[data-status="failed"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
+  .status-pill[data-status="pending"]{ background: var(--accent-soft); color: var(--accent); }
 
   .empty-state{
     text-align:center;
@@ -209,7 +186,7 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .top-row, .mark, .table-card, .empty-state, .foot{ animation: none; opacity: 1; }
+    h1, .mark, .table-card, .empty-state, .foot{ animation: none; opacity: 1; }
   }
 
   @media (max-width: 640px){
@@ -217,17 +194,16 @@
     thead{ display:none; }
     table, tbody, tr, td{ display:block; width:100%; }
     tbody tr{ border-bottom: 1px solid var(--border); padding: 14px 20px; }
-    tbody td{ border: none; padding: 4px 0; }
+    tbody td{ border: none; padding: 4px 0; text-align: left !important; }
     tbody td::before{
       content: attr(data-label);
       display:block;
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-dim);
       margin-bottom: 2px;
     }
-    td.actions{ text-align: left; margin-top: 6px; }
   }
 
 </style>
@@ -236,17 +212,14 @@
 
   <div class="panel">
 
-    <div class="top-row">
-      <h1>My Subscriptions</h1>
-      <a class="btn-create" href="{% url 'create_subscription' %}">Subscribe to a Plan</a>
-    </div>
+    <h1>My Transactions</h1>
 
     <div class="mark">
       <span class="dot"></span>
       <span class="line"></span>
     </div>
 
-    {% if subscriptions %}
+    {% if transactions %}
 
         <div class="table-card">
             <table>
@@ -254,30 +227,26 @@
                     <tr>
                         <th>ID</th>
                         <th>Plan</th>
-                        <th>Monthly Fee</th>
-                        <th>Start Date</th>
+                        <th>Amount</th>
+                        <th>Transaction Type</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th>Billing Date</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for subscription in subscriptions %}
+                    {% for transaction in transactions %}
                         <tr>
-                            <td data-label="ID">{{subscription.id}}</td>
-                            <td data-label="Plan">{{ subscription.Plan.name }}</td>
-                            <td data-label="Monthly Fee">{{ subscription.Plan.monthly_fee }}</td>
-                            <td data-label="Start Date">{{ subscription.start_date }}</td>
+                            <td data-label="ID">#{{ transaction.id }}</td>
+                            <td data-label="Plan">{{ transaction.Subscription.Plan.name }}</td>
+                            <td data-label="Amount">{{ transaction.amount }}</td>
+                            <td data-label="Transaction Type">
+                                <span class="type-pill" data-type="{{ transaction.Transaction_type|lower }}">{{ transaction.Transaction_type }}</span>
+                            </td>
                             <td data-label="Status">
-                                <span class="status" data-status="{{ subscription.status|lower }}">{{ subscription.status }}</span>
+                                <span class="status-pill" data-status="{{ transaction.Status|lower }}">{{ transaction.Status }}</span>
                             </td>
-                            <td class="actions" data-label="Actions">
-                                {% if subscription.status == "active" %}
-                                    <a href="{% url 'deactivate_subscription' subscription.id %}">Deactivate</a>
-                                {% else %}
-                                    <span class="inactive-label">Already Inactive</span>
-                                {% endif %}
-                            </td>
+                            <td data-label="Billing Date">{{ transaction.Billing_date }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -287,7 +256,7 @@
     {% else %}
 
         <div class="empty-state">
-            <p>You have no subscriptions yet.</p>
+            <p>No transactions found.</p>
         </div>
 
     {% endif %}
