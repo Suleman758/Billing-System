@@ -17,6 +17,13 @@ from .views import (
     delete_plan,
     create_subscription,
     subscription_list,
+    deactivate_subscription,
+    create_usage,
+    usage_list,
+    billing_summary,
+    bill_subscription,
+    transaction_list,
+    launch_billing,
 )
 
 urlpatterns = [
@@ -79,4 +86,47 @@ urlpatterns = [
     views.subscription_list,
     name="subscription_list"
     ),
+
+    path(
+    "subscriptions/<int:subscription_id>/deactivate/",
+    views.deactivate_subscription,
+    name="deactivate_subscription"
+    ),
+
+    path(
+    "usage/create/",
+    views.create_usage,
+    name="create_usage"
+    ),
+
+    path(
+    "usage/",
+    views.usage_list,
+    name="usage_list"
+    ),
+
+    path(
+    "billing/<int:subscription_id>/",
+    views.billing_summary,
+    name="billing_summary"
+    ),
+
+    path(
+    "billing/<int:subscription_id>/bill/",
+    views.bill_subscription,
+    name="bill_subscription"
+    ),
+
+    path(
+    "transactions/",
+    views.transaction_list,
+    name="transaction_list"
+    ),
+
+    path(
+    "billing/launch/",
+    launch_billing,
+    name="launch_billing",
+),
+
 ]

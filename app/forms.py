@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Subscription, User, Feature,Plan
+from .models import Subscription, User, Feature,Plan,Usage
 
 class SignupForm(UserCreationForm):
     class Meta:
@@ -9,7 +9,7 @@ class SignupForm(UserCreationForm):
             'username',
             'email',
             'profile_photo',
-            'billing_day',
+            'buyer_billing_day',
         ]
 
 class FeatureForm(forms.ModelForm):
@@ -26,4 +26,30 @@ class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
         fields = ['Plan']
+
+class UsageForm(forms.ModelForm):
+
+    class Meta:
+        model = Usage
+        fields = [
+            "Subscription",
+            "Feature",
+            "units",
+        ]
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        subscriptions = Subscription.objects.filter(
+            Buyer=user,
+            status="active"
+        )
+
+        self.fields["Subscription"].queryset = subscriptions
+
+        self.fields["Feature"].queryset = Feature.objects.filter(
+            plan__in=Plan.objects.filter(
+                subscriptions__in=subscriptions
+            )
+        ).distinct()
       
