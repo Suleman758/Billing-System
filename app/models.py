@@ -27,7 +27,7 @@ class User(AbstractUser):
         null=True,
     )
 
-    billing_day = models.PositiveSmallIntegerField(
+    buyer_billing_day = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1),
             MaxValueValidator(28),
@@ -61,6 +61,9 @@ class Subscription(models.Model):
     start_date = models.DateField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
+    def __str__(self):
+        return f"{self.Buyer.username} - {self.Plan.name}"
+ 
 
 class Usage(models.Model):
     Subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE,related_name='usages')

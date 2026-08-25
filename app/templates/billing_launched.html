@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Billing Completed</title>
+</head>
+<body>
+
+    <h1>Billing Completed</h1>
+
+    {% if transactions %}
+
+        <p>
+            The following transactions were created or already existed for today:
+        </p>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Buyer</th>
+                    <th>Plan</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Billing Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+
+                        <td>
+                            {{ transaction.Buyer.username }}
+                        </td>
+
+                        <td>
+                            {{ transaction.Subscription.Plan.name }}
+                        </td>
+
+                        <td>
+                            {{ transaction.amount }}
+                        </td>
+
+                        <td>
+                            {{ transaction.Transaction_type }}
+                        </td>
+
+                        <td>
+                            {{ transaction.Status }}
+                        </td>
+
+                        <td>
+                            {{ transaction.Billing_date }}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    {% else %}
+
+        <p>
+            No subscriptions were eligible for billing today.
+        </p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{% url 'transaction_list' %}">
+        View Transactions
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'home' %}">
+        Back to Home
+    </a><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing Completed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --accent-soft: rgba(200,164,91,0.14);
+    --success: #7aa874;
+    --success-soft: rgba(122,168,116,0.14);
+    --danger: #b8624c;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(122,168,116,0.06), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    padding: 56px 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .status-row{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-bottom: 8px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .icon-badge{
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--success-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .icon-badge svg{
+    width: 18px;
+    height: 18px;
+    stroke: var(--success);
+    fill: none;
+    stroke-width: 2;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.1rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin: 20px 0 28px;
+    opacity:0;
+    animation: fadeIn 0.7s ease 0.15s forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  .summary-text{
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin: 0 0 24px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .table-card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.25s forwards;
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead th{
+    text-align: left;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    font-weight: 500;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  thead th:nth-child(4){ text-align: right; }
+
+  tbody td{
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  tbody tr:last-child td{ border-bottom: none; }
+  tbody tr{ transition: background 0.2s ease; }
+  tbody tr:hover{ background: var(--accent-soft); }
+
+  tbody td:first-child{ font-size: 0.8rem; }
+  tbody td:nth-child(2),
+  tbody td:nth-child(3){ color: var(--text); }
+
+  tbody td:nth-child(4){
+    text-align: right;
+    color: var(--accent);
+    font-family: 'Fraunces', serif;
+    font-size: 0.98rem;
+  }
+
+  .type-pill{
+    display:inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+  }
+  .type-pill[data-type="debit"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
+  .type-pill[data-type="credit"]{ background: var(--success-soft); color: var(--success); }
+
+  .status-pill{
+    display:inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .status-pill[data-status="success"]{ background: var(--success-soft); color: var(--success); }
+  .status-pill[data-status="failed"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
+  .status-pill[data-status="pending"]{ background: var(--accent-soft); color: var(--accent); }
+
+  .empty-state{
+    text-align:center;
+    padding: 56px 24px;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.25s forwards;
+  }
+
+  .links{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 32px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+  .links a{
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+  .links a.secondary{ color: var(--text-dim); }
+  .links a:hover{ border-bottom-color: currentColor; }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .status-row, .mark, .summary-text, .table-card, .empty-state, .links{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 640px){
+    h1{ font-size: 1.7rem; }
+    thead{ display:none; }
+    table, tbody, tr, td{ display:block; width:100%; }
+    tbody tr{ border-bottom: 1px solid var(--border); padding: 14px 20px; }
+    tbody td{ border: none; padding: 4px 0; text-align: left !important; }
+    tbody td::before{
+      content: attr(data-label);
+      display:block;
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="panel">
+
+    <div class="status-row">
+      <div class="icon-badge">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h1>Billing Completed</h1>
+    </div>
+
+    <div class="mark">
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
+
+    {% if transactions %}
+
+        <p class="summary-text">The following transactions were created or already existed for today:</p>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Buyer</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Billing Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td data-label="Transaction ID">#{{ transaction.id }}</td>
+                            <td data-label="Buyer">{{ transaction.Buyer.username }}</td>
+                            <td data-label="Plan">{{ transaction.Subscription.Plan.name }}</td>
+                            <td data-label="Amount">{{ transaction.amount }}</td>
+                            <td data-label="Type">
+                                <span class="type-pill" data-type="{{ transaction.Transaction_type|lower }}">{{ transaction.Transaction_type }}</span>
+                            </td>
+                            <td data-label="Status">
+                                <span class="status-pill" data-status="{{ transaction.Status|lower }}">{{ transaction.Status }}</span>
+                            </td>
+                            <td data-label="Billing Date">{{ transaction.Billing_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <p>No subscriptions were eligible for billing today.</p>
+        </div>
+
+    {% endif %}
+
+    <div class="links">
+      <a href="{% url 'transaction_list' %}">View Transactions</a>
+      <a class="secondary" href="{% url 'home' %}">Back to Home</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
+
+</body>
+</html>

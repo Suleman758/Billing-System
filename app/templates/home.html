@@ -1,16 +1,277 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    height:100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+
+  #cursor-grid{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+  }
+
+  .content{
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 460px;
+    text-align:center;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-bottom: 24px;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, transparent, var(--border-soft) 40%, var(--border-soft) 60%, transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.2rem;
+    margin: 0 0 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .card{
+    background: rgba(23,21,15,0.75);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+
+  .info-row{
+    display:flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+  }
+  .info-row + .info-row{
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .info-label{
+    color: var(--text-dim);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+  }
+  .info-value{ color: var(--text); }
+
+  .logout-link{
+    display:inline-block;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+  .logout-link:hover{ border-bottom-color: var(--accent); }
+
+</style>
 </head>
 <body>
 
-    <h1>Welcome, {{ user.username }}</h1>
+  <canvas id="cursor-grid"></canvas>
 
-    <p>Email: {{ user.email }}</p>
-    <p>Type: {{ user.type }}</p>
+  <div class="content">
+    <div class="panel">
 
-    <a href="{% url 'logout' %}">Logout</a>
+      <div class="mark">
+        <span class="line"></span>
+        <span class="dot"></span>
+        <span class="line"></span>
+      </div>
+
+      <h1>Welcome, {{ user.username }}</h1>
+
+      <div class="card">
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Type</span>
+          <span class="info-value">{{ user.type }}</span>
+        </div>
+      </div>
+
+      <a class="logout-link" href="{% url 'logout' %}">Logout</a>
+
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('cursor-grid');
+    const ctx = canvas.getContext('2d');
+
+    const CELL_SIZE   = 70;
+    const COLOR        = '#efb946';
+    const RADIUS        = 140;
+    const HOLD_TIME      = 400;   // ms a cell stays lit after cursor leaves range
+    const FADE_DURATION   = 800;  // ms fade-out
+    const LINE_WIDTH       = 1.2;
+    const MAX_OPACITY       = 1;
+    const CLICK_PULSE        = true;
+    const PULSE_SPEED         = 600; // ms
+
+    let width, height, cols, rows;
+    let mouse = { x: -9999, y: -9999 };
+    let cellState = new Map(); // key "c,r" -> { lastActive: timestamp, active: bool }
+    let pulses = []; // { x, y, start }
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      cols = Math.ceil(width / CELL_SIZE) + 1;
+      rows = Math.ceil(height / CELL_SIZE) + 1;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseleave', () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    });
+
+    if (CLICK_PULSE) {
+      window.addEventListener('click', (e) => {
+        pulses.push({ x: e.clientX, y: e.clientY, start: performance.now() });
+      });
+    }
+
+    function smoothFalloff(dist, radius) {
+      const t = Math.min(dist / radius, 1);
+      return 1 - (t * t * (3 - 2 * t)); // smoothstep falloff
+    }
+
+    function draw(now) {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let c = 0; c < cols; c++) {
+        for (let r = 0; r < rows; r++) {
+          const cx = c * CELL_SIZE + CELL_SIZE / 2;
+          const cy = r * CELL_SIZE + CELL_SIZE / 2;
+          const dist = Math.hypot(mouse.x - cx, mouse.y - cy);
+          const key = c + ',' + r;
+          let state = cellState.get(key);
+
+          if (dist <= RADIUS) {
+            if (!state) state = { lastActive: now, fadingSince: null };
+            state.lastActive = now;
+            state.fadingSince = null;
+            cellState.set(key, state);
+          } else if (state && state.fadingSince === null) {
+            state.fadingSince = now + HOLD_TIME;
+          }
+
+          if (!state) continue;
+
+          let opacity = 0;
+          if (state.fadingSince === null) {
+            opacity = smoothFalloff(dist, RADIUS) * MAX_OPACITY;
+          } else if (now < state.fadingSince) {
+            opacity = MAX_OPACITY;
+          } else {
+            const elapsed = now - state.fadingSince;
+            opacity = Math.max(0, MAX_OPACITY * (1 - elapsed / FADE_DURATION));
+            if (opacity <= 0) {
+              cellState.delete(key);
+              continue;
+            }
+          }
+
+          if (opacity > 0.01) {
+            ctx.strokeStyle = COLOR;
+            ctx.globalAlpha = opacity;
+            ctx.lineWidth = LINE_WIDTH;
+            ctx.strokeRect(
+              c * CELL_SIZE + 0.5,
+              r * CELL_SIZE + 0.5,
+              CELL_SIZE - 1,
+              CELL_SIZE - 1
+            );
+          }
+        }
+      }
+
+      if (CLICK_PULSE) {
+        pulses = pulses.filter(p => now - p.start < PULSE_SPEED);
+        for (const p of pulses) {
+          const t = (now - p.start) / PULSE_SPEED;
+          const r = t * RADIUS * 1.5;
+          ctx.globalAlpha = (1 - t) * MAX_OPACITY;
+          ctx.strokeStyle = COLOR;
+          ctx.lineWidth = LINE_WIDTH;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
+  })();
+  </script>
 
 </body>
 </html>

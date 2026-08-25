@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --accent-soft: rgba(200,164,91,0.14);
+    --danger: #b8624c;
+    --danger-soft: rgba(184,98,76,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(200,164,91,0.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    padding: 56px 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom: 8px;
+    opacity:0;
+    animation: fadeIn 0.7s ease forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.1rem;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .summary-card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.2s forwards;
+  }
+
+  .plan-name{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0 0 4px;
+  }
+  .plan-label{
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+  }
+
+  .fee-block{ text-align: right; }
+  .fee-value{
+    font-family:'Fraunces', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .fee-label{
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+  }
+
+  .table-card{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead th{
+    text-align: left;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    font-weight: 500;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  thead th:not(:first-child){ text-align: right; }
+
+  tbody td{
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tbody td:not(:first-child){
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+  }
+
+  tbody tr:last-child td{ border-bottom: none; }
+  tbody tr{ transition: background 0.2s ease; }
+  tbody tr:hover{ background: var(--accent-soft); }
+
+  .feature-name{ font-weight: 500; color: var(--text); }
+
+  .usage-track{
+    margin-top: 8px;
+    width: 120px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .usage-fill{
+    height: 100%;
+    background: var(--accent);
+  }
+  .usage-fill.over{ background: var(--danger); }
+
+  .overused{ color: var(--danger) !important; font-weight: 600; }
+  .charge{ color: var(--accent) !important; font-weight: 600; }
+
+  .empty-row td{
+    text-align: center !important;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 40px 20px;
+  }
+
+  .foot{
+    text-align:center;
+    margin-top: 32px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.4s forwards;
+  }
+  .foot a{
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease;
+  }
+  .foot a:hover{ border-bottom-color: var(--accent); }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mark, h1, .summary-card, .table-card, .foot{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 640px){
+    h1{ font-size: 1.7rem; }
+    .summary-card{ flex-direction: column; align-items: flex-start; }
+    .fee-block{ text-align: left; }
+    thead{ display:none; }
+    table, tbody, tr, td{ display:block; width:100%; }
+    tbody tr{ border-bottom: 1px solid var(--border); padding: 14px 20px; }
+    tbody td{ border: none; padding: 4px 0; text-align: left !important; }
+    tbody td::before{
+      content: attr(data-label);
+      display:block;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+    .usage-track{ width: 100%; }
+  }
+
+</style>
+</head>
+<body>
+
+  <div class="panel">
+
+    <div class="mark">
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
+
+    <h1>Billing Summary</h1>
+
+    <div class="summary-card">
+      <div>
+        <div class="plan-label">Plan</div>
+        <div class="plan-name">{{ subscription.Plan.name }}</div>
+      </div>
+      <div class="fee-block">
+        <div class="fee-value">{{ subscription.Plan.monthly_fee }}</div>
+        <div class="fee-label">Monthly Fee</div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Total Usage</th>
+            <th>Allowed Limit</th>
+            <th>Overused Units</th>
+            <th>Unit Price</th>
+            <th>Overuse Charge</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in results %}
+            <tr>
+              <td data-label="Feature">
+                <div class="feature-name">{{ result.feature.name }}</div>
+                <div class="usage-track">
+                  <div class="usage-fill {% if result.overused_units > 0 %}over{% endif %}"
+                       style="width: {% if result.max_unit_limit > 0 %}{{ result.total_usage|floatformat:0 }}{% else %}100{% endif %}%;"></div>
+                </div>
+              </td>
+              <td data-label="Total Usage">{{ result.total_usage }}</td>
+              <td data-label="Allowed Limit">{{ result.max_unit_limit }}</td>
+              <td data-label="Overused Units" class="{% if result.overused_units > 0 %}overused{% endif %}">{{ result.overused_units }}</td>
+              <td data-label="Unit Price">{{ result.unit_price }}</td>
+              <td data-label="Overuse Charge" class="{% if result.overuse_charge > 0 %}charge{% endif %}">{{ result.overuse_charge }}</td>
+            </tr>
+          {% empty %}
+            <tr class="empty-row">
+              <td colspan="6">No features found for this subscription.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="foot">
+      <a href="{% url 'subscription_list' %}">← Back to Subscriptions</a>
+    </p>
+
+  </div>
+
+</body>
+</html>

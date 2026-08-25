@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Subscriptions</title>
+<title>My Usage</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
     --text-dim: #948b78;
     --accent: #c8a45b;
     --accent-soft: rgba(200,164,91,0.14);
-    --danger: #b8624c;
   }
 
   *{ box-sizing: border-box; }
@@ -36,7 +35,7 @@
 
   .panel{
     width:100%;
-    max-width: 960px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
@@ -122,8 +121,6 @@
     border-bottom: 1px solid var(--border);
   }
 
-  thead th:last-child{ text-align: right; }
-
   tbody td{
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-soft);
@@ -135,44 +132,20 @@
   tbody tr{ transition: background 0.2s ease; }
   tbody tr:hover{ background: var(--accent-soft); }
 
-  tbody td:nth-child(2),
-  tbody td:nth-child(3){
+  tbody td:nth-child(3),
+  tbody td:nth-child(4){
     font-variant-numeric: tabular-nums;
     color: var(--text-dim);
   }
 
-  .status{
+  .feature-tag{
     display:inline-block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 12px;
     background: var(--accent-soft);
     color: var(--accent);
-  }
-  .status[data-status="active"]{ background: rgba(122,168,116,0.14); color: #7aa874; }
-  .status[data-status="cancelled"],
-  .status[data-status="canceled"],
-  .status[data-status="expired"]{ background: rgba(184,98,76,0.14); color: var(--danger); }
-  .status[data-status="pending"]{ background: var(--accent-soft); color: var(--accent); }
-
-  td.actions{ text-align: right; }
-  td.actions a{
-    color: var(--danger);
-    text-decoration: none;
-    font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.25s ease;
-  }
-  td.actions a:hover{ border-bottom-color: var(--danger); }
-  td.actions .inactive-label{
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    font-style: italic;
+    font-size: 0.76rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
   }
 
   .empty-state{
@@ -227,7 +200,6 @@
       color: var(--text-dim);
       margin-bottom: 2px;
     }
-    td.actions{ text-align: left; margin-top: 6px; }
   }
 
 </style>
@@ -237,8 +209,8 @@
   <div class="panel">
 
     <div class="top-row">
-      <h1>My Subscriptions</h1>
-      <a class="btn-create" href="{% url 'create_subscription' %}">Subscribe to a Plan</a>
+      <h1>My Feature Usage</h1>
+      <a class="btn-create" href="{% url 'create_usage' %}">Add Usage</a>
     </div>
 
     <div class="mark">
@@ -246,38 +218,26 @@
       <span class="line"></span>
     </div>
 
-    {% if subscriptions %}
+    {% if usages %}
 
         <div class="table-card">
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Plan</th>
-                        <th>Monthly Fee</th>
-                        <th>Start Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>Feature</th>
+                        <th>Units</th>
+                        <th>Usage Date</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for subscription in subscriptions %}
+                    {% for usage in usages %}
                         <tr>
-                            <td data-label="ID">{{subscription.id}}</td>
-                            <td data-label="Plan">{{ subscription.Plan.name }}</td>
-                            <td data-label="Monthly Fee">{{ subscription.Plan.monthly_fee }}</td>
-                            <td data-label="Start Date">{{ subscription.start_date }}</td>
-                            <td data-label="Status">
-                                <span class="status" data-status="{{ subscription.status|lower }}">{{ subscription.status }}</span>
-                            </td>
-                            <td class="actions" data-label="Actions">
-                                {% if subscription.status == "active" %}
-                                    <a href="{% url 'deactivate_subscription' subscription.id %}">Deactivate</a>
-                                {% else %}
-                                    <span class="inactive-label">Already Inactive</span>
-                                {% endif %}
-                            </td>
+                            <td data-label="Plan">{{ usage.Subscription.Plan.name }}</td>
+                            <td data-label="Feature"><span class="feature-tag">{{ usage.Feature.name }}</span></td>
+                            <td data-label="Units">{{ usage.units }}</td>
+                            <td data-label="Usage Date">{{ usage.usage_date }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -287,7 +247,7 @@
     {% else %}
 
         <div class="empty-state">
-            <p>You have no subscriptions yet.</p>
+            <p>No usage records found.</p>
         </div>
 
     {% endif %}
