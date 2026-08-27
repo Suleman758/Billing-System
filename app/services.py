@@ -5,23 +5,57 @@ from django.db.models import Sum
 from .models import Subscription, Usage,User
 
 
+from decimal import Decimal
+
+from django.db.models import Sum
+from django.utils import timezone
+
+from .models import Subscription, Usage, Transaction
+from django.db import transaction
+
+
 def calculate_subscription_overuse(subscription):
+    today = timezone.localdate()
+
+    # Find the most recent successful debit for this subscription.
+    last_transaction = (
+        Transaction.objects
+        .filter(
+            Subscription=subscription,
+            Transaction_type="debit",
+            Status="success",
+        )
+        .order_by("-Billing_date")
+        .first()
+    )
+
     results = []
 
-    # Get all features that belong to this subscription's plan
     features = subscription.Plan.features.all()
 
     for feature in features:
 
-        # Get total usage of this feature for this subscription
-        total_usage = Usage.objects.filter(
+        usage_queryset = Usage.objects.filter(
             Subscription=subscription,
             Feature=feature,
-        ).aggregate(
+            usage_date__lte=today,
+        )
+
+        if last_transaction:
+            # Previous billing date has already been processed.
+            usage_queryset = usage_queryset.filter(
+                usage_date__gt=last_transaction.Billing_date
+            )
+        else:
+            # First billing: include usage from the subscription start date.
+            usage_queryset = usage_queryset.filter(
+                usage_date__gte=subscription.start_date
+            )
+
+        total_usage = usage_queryset.aggregate(
             total=Sum("units")
         )["total"] or 0
 
-        # If there is no limit, there is no overuse calculation
         if feature.max_unit_limit is None:
             overused_units = 0
             overuse_charge = Decimal("0.00")
@@ -112,8 +146,11 @@ def process_billing_for_today():
 
     transactions = []
 
-    for subscription in subscriptions:
-        transaction = create_subscription_transaction(subscription)
-        transactions.append(transaction)
+    with transaction.atomic():
+        for subscription in subscriptions:
+            created_transaction = create_subscription_transaction(
+                subscription
+            )
+            transactions.append(created_transaction)
 
     return transactions

@@ -6,12 +6,12 @@ from django.contrib.auth import logout
 # Create your views here.
 
 from django.shortcuts import render, redirect
-from .forms import PlanForm, SignupForm,FeatureForm, SubscriptionForm, UsageForm
+from .forms import PlanForm, SignupForm,FeatureForm, SubscriptionForm,AdminUsageForm
 from .models import Transaction, User, Feature,Plan,Subscription,Usage
 from .decorators import admin_required
 from django.shortcuts import get_object_or_404
 from .services import calculate_subscription_overuse,create_subscription_transaction,process_billing_for_today
-
+from django.http import JsonResponse
 
 @login_required
 def home(request):
@@ -25,6 +25,45 @@ def logout_view(request):
 def some_admin_view(request):
     #return render(request, "some_admin_view.html")
     pass
+
+@login_required
+def get_subscription_features(request, subscription_id):
+    subscription = get_object_or_404(
+        Subscription,
+        id=subscription_id,
+        status="active"
+    )
+
+    features = subscription.Plan.features.all()
+
+    data = [
+        {
+            "id": feature.id,
+            "name": feature.name,
+        }
+        for feature in features
+    ]
+
+    return JsonResponse(data, safe=False)
+
+@login_required
+@admin_required
+def admin_create_usage(request):
+    if request.method == "POST":
+        form = AdminUsageForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect("usage_list")
+
+    else:
+        form = AdminUsageForm()
+
+    return render(
+        request,
+        "admin_create_usage.html",
+        {"form": form},
+    )
 
 @admin_required
 def launch_billing(request):
@@ -100,12 +139,13 @@ def billing_summary(request, subscription_id):
 
 @login_required
 def usage_list(request):
-    usages = Usage.objects.filter(
-        Subscription__Buyer=request.user
-    ).select_related(
-        "Subscription",
-        "Feature",
-    )
+
+    if request.user.type == "admin":
+        usages = Usage.objects.all()
+    else:
+        usages = Usage.objects.filter(
+            Subscription__Buyer=request.user
+        )
 
     return render(
         request,
@@ -113,10 +153,11 @@ def usage_list(request):
         {"usages": usages},
     )
 
+
 @login_required
 def create_usage(request):
     if request.method == "POST":
-        form = UsageForm(
+        form = AdminUsageForm(
             request.user,
             request.POST
         )
@@ -136,7 +177,7 @@ def create_usage(request):
                 return redirect("usage_list")
 
     else:
-        form = UsageForm(request.user)
+        form = AdminUsageForm(request.user)
 
     return render(
         request,
