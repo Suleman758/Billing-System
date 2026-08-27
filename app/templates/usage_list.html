@@ -107,33 +107,37 @@
   table{
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
   }
 
   thead th{
     text-align: left;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.08em;
     color: var(--text-dim);
     font-weight: 500;
-    padding: 18px 24px 14px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid var(--border);
   }
 
   tbody td{
-    padding: 16px 24px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border-soft);
     color: var(--text);
   }
 
   tbody tr:last-child td{ border-bottom: none; }
-
   tbody tr{ transition: background 0.2s ease; }
   tbody tr:hover{ background: var(--accent-soft); }
 
-  tbody td:nth-child(3),
-  tbody td:nth-child(4){
+  tbody td:first-child{
+    color: var(--text-dim);
+    font-size: 0.82rem;
+  }
+
+  tbody td:nth-child(4),
+  tbody td:nth-child(5){
     font-variant-numeric: tabular-nums;
     color: var(--text-dim);
   }
@@ -209,7 +213,7 @@
   <div class="panel">
 
     <div class="top-row">
-      <h1>My Feature Usage</h1>
+      <h1>Usage Records</h1>
       <a class="btn-create" href="{% url 'create_usage' %}">Add Usage</a>
     </div>
 
@@ -224,6 +228,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Plan</th>
                         <th>Feature</th>
                         <th>Units</th>
@@ -234,6 +239,7 @@
                 <tbody>
                     {% for usage in usages %}
                         <tr>
+                            <td data-label="ID">#{{ usage.id }}</td>
                             <td data-label="Plan">{{ usage.Subscription.Plan.name }}</td>
                             <td data-label="Feature"><span class="feature-tag">{{ usage.Feature.name }}</span></td>
                             <td data-label="Units">{{ usage.units }}</td>

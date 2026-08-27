@@ -24,6 +24,7 @@ from .views import (
     bill_subscription,
     transaction_list,
     launch_billing,
+    admin_create_usage
 )
 
 urlpatterns = [
@@ -127,6 +128,18 @@ urlpatterns = [
     "billing/launch/",
     launch_billing,
     name="launch_billing",
-),
+    ),
+
+    path(
+    "usage/admin/create/",
+    views.admin_create_usage,
+    name="admin_create_usage",
+    ),
+
+    path(
+    "subscriptions/<int:subscription_id>/features/",
+    views.get_subscription_features,
+    name="get_subscription_features",
+    ),
 
 ]
