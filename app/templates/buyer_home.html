@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buyer Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 16px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+
+        .logout {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Buyer Dashboard</h1>
+
+    <p>Welcome, {{ request.user.username }}</p>
+
+
+    <div class="section">
+        <h2>Subscriptions</h2>
+
+        <div class="buttons">
+            <a class="button" href="{% url 'subscription_list' %}">
+                My Subscriptions
+            </a>
+
+            <a class="button" href="{% url 'create_subscription' %}">
+                Subscribe to a Plan
+            </a>
+        </div>
+    </div>
+
+
+    <div class="section">
+        <h2>Usage</h2>
+
+        <div class="buttons">
+            <a class="button" href="{% url 'usage_list' %}">
+                My Usage
+            </a>
+        </div>
+    </div>
+
+
+    <div class="section">
+        <h2>Transactions</h2>
+
+        <div class="buttons">
+            <a class="button" href="{% url 'transaction_list' %}">
+                My Transactions
+            </a>
+        </div>
+    </div><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0f0e0c;
+    --surface: #17150f;
+    --border: #322d24;
+    --border-soft: #241f18;
+    --text: #f2ecdf;
+    --text-dim: #948b78;
+    --accent: #c8a45b;
+    --accent-soft: rgba(200,164,91,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(200,164,91,0.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    padding: 56px 24px;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .greeting{
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin: 0 0 6px;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.05s forwards;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: 2.2rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin: 24px 0 40px;
+    opacity:0;
+    animation: fadeIn 0.7s ease 0.15s forwards;
+  }
+  .mark .line{
+    height:1px;
+    flex:1;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+  .mark .dot{
+    width:5px; height:5px;
+    border-radius:50%;
+    background: var(--accent);
+    flex-shrink:0;
+  }
+
+  .section{
+    margin-bottom: 32px;
+    opacity:0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+  .section:nth-of-type(1){ animation-delay: 0.2s; }
+  .section:nth-of-type(2){ animation-delay: 0.28s; }
+  .section:nth-of-type(3){ animation-delay: 0.36s; }
+
+  .section h2{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.15rem;
+    margin: 0 0 16px;
+    color: var(--text);
+  }
+
+  .buttons{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .button{
+    display:inline-block;
+    padding: 11px 20px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 3px;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+    transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+  }
+  .button:hover{
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .button.primary{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #17150f;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+  }
+  .button.primary:hover{
+    background: #d9b774;
+    color: #17150f;
+  }
+
+  .logout-row{
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-soft);
+    text-align: center;
+    opacity:0;
+    animation: fadeUp 0.7s ease 0.45s forwards;
+  }
+  .logout-row a{
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .logout-row a:hover{
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  @keyframes fadeIn{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(8px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .greeting, h1, .mark, .section, .logout-row{ animation: none; opacity: 1; }
+  }
+
+  @media (max-width: 480px){
+    h1{ font-size: 1.8rem; }
+    .buttons{ flex-direction: column; }
+    .button{ text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="panel">
+
+    <p class="greeting">Welcome back</p>
+    <h1>{{ request.user.username }}</h1>
+
+    <div class="mark">
+      <span class="dot"></span>
+      <span class="line"></span>
+    </div>
+
+    <div class="section">
+      <h2>Subscriptions</h2>
+      <div class="buttons">
+        <a class="button primary" href="{% url 'create_subscription' %}">Subscribe to a Plan</a>
+        <a class="button" href="{% url 'subscription_list' %}">My Subscriptions</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Usage</h2>
+      <div class="buttons">
+        <a class="button" href="{% url 'usage_list' %}">My Usage</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Transactions</h2>
+      <div class="buttons">
+        <a class="button" href="{% url 'transaction_list' %}">My Transactions</a>
+      </div>
+    </div>
+
+    <div class="logout-row">
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
+
+
+    <div class="logout">
+        <a class="button" href="{% url 'logout' %}">
+            Logout
+        </a>
+    </div>
+
+</body>
+</html>

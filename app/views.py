@@ -15,8 +15,13 @@ from django.http import JsonResponse
 
 @login_required
 def home(request):
-    return render(request, "home.html",{'user' : request.user})
 
+    if request.user.type == "admin":
+        return render(request,"admin_home.html")
+
+    return render(request,"buyer_home.html")
+
+    
 def logout_view(request):
     logout(request)
     return redirect("login")
@@ -80,13 +85,14 @@ def launch_billing(request):
 
 @login_required
 def transaction_list(request):
-    transactions = Transaction.objects.filter(
-        Buyer=request.user
-    ).select_related(
-        "Subscription",
-        "Subscription__Plan",
-    )
 
+    if request.user.type == "admin":
+        transactions = Transaction.objects.all()
+    else:
+        transactions = Transaction.objects.filter(
+            Buyer=request.user
+        )
+    
     return render(
         request,
         "transaction_list.html",
