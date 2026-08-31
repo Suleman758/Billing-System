@@ -40,6 +40,9 @@ urlpatterns = [
             name="create_feature"
     ),
 
+    path("", views.signup, name="signup"),
+
+
     path(
     "features/<int:feature_id>/edit/",
     views.edit_feature,
